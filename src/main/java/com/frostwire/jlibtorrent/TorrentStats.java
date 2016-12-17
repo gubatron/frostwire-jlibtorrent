@@ -1,15 +1,19 @@
 package com.frostwire.jlibtorrent;
-
 import com.frostwire.jlibtorrent.alerts.Alert;
 import com.frostwire.jlibtorrent.alerts.AlertType;
-import com.frostwire.jlibtorrent.alerts.BlockFinishedAlert;
 import com.frostwire.jlibtorrent.alerts.TorrentAddedAlert;
-import sun.invoke.empty.Empty;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * It will start an alertEvent listener to keep track of the download
+ * and upload Speed (bytes/sec). The granularity selected will depend
+ * on the speed in which the results of the speed of the Alert event
+ * listener is retrieved, which can have a delay in milliseconds calculated
+ * in avg of 1-90ms.
+ *
+ * @author haperlot
+ */
 
 public final class TorrentStats {
 
@@ -24,6 +28,7 @@ public final class TorrentStats {
     private Queue<Integer> uploadRate = new LinkedList<Integer>();
     private long tStart; //for collecting sampling interval time
 
+
     public TorrentStats(final SessionManager sessionManager, TorrentHandle torrentHandle, long samplingIntervalInMs, long maxHistoryInMs) {
         this.sessionManager = sessionManager;
         this.torrentHandle = torrentHandle;
@@ -35,6 +40,12 @@ public final class TorrentStats {
     }
 
 
+    /**
+     * It will start the alert event listener, as soon as the sampling interval
+     * meets the requested time it will save the values on queues. If the queues
+     * reach max size denoted by the maxHistory time, they will poll() the head
+     * element, in our case the oldest inserted.
+     */
     private void startAlertListener() {
 
         sessionManager.addListener(new AlertListener() {
@@ -87,8 +98,12 @@ public final class TorrentStats {
     }
 
 
-    //Type = DOWNLOAD / UPLOAD
-    //limit = number of download speed samples or less if available
+    /**
+     * Will return all available items on the queue, depending on the type selected
+     * @return all the elements tracked by the event listener limited by the maxHistor
+     * @param type type of speed (bytes/sec) data to retrieve
+     */
+
     public int[] get(String type) {
         Queue<Integer> resultQueue = null;
         int i;
@@ -104,7 +119,6 @@ public final class TorrentStats {
             //returning available items
             i = 0;
             for (Integer element : resultQueue) {
-                //System.out.println("element: "+element.intValue());
                 rateHistory[i] = element.intValue();
 
                 i++;
@@ -112,11 +126,18 @@ public final class TorrentStats {
 
             return rateHistory;
         }
-
         //return empty queue is empty
         return new int[10];
-
     }
+
+    /**
+     * Will return all available items on the queue, depending on the type selected.
+     * It will also limi the result returned.
+     * @param type type of speed (bytes/sec) data to retrieve
+     * @param limit number of results to retrieve
+     * @return all the elements tracked by the event listener limited by the maxHistory
+     */
+
 
     public int[] get(String type, int limit) {
         Queue<Integer> resultQueue = null;
@@ -154,8 +175,5 @@ public final class TorrentStats {
         }
         //return empty queue is empty
         return new int[limit];
-
     }
-
-
 }
