@@ -1,9 +1,6 @@
 package com.frostwire.jlibtorrent;
 import com.frostwire.jlibtorrent.alerts.Alert;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 /**
@@ -59,7 +56,7 @@ public final class TorrentStats {
 
                     //if !paused && !finished, it could be paused during the download
                     if (!torrentHandle.status().isFinished() && !torrentHandle.status().isPaused()) {
-                        
+
                         downloadRate.add(torrentHandle.status().downloadRate());
                         uploadRate.add(torrentHandle.status().uploadRate());
 

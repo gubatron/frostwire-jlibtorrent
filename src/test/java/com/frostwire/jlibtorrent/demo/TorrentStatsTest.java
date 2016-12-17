@@ -55,7 +55,7 @@ public final class TorrentStatsTest {
 
                     case BLOCK_FINISHED:
                         //gets all the available upload speed samples (bytes/sec), in this case that'd be <= 600 elements
-                        //int[] speedRate = stats.get(TorrentStats.DOWNLOAD);a
+                        //int[] speedRate = stats.get(TorrentStats.DOWNLOAD);
                         //gets the last 10 available download speed samples or less if less available
                         //int[] speedRate = stats.get(TorrentStats.DOWNLOAD, 10);
                         //int[] speedRate = stats.get(TorrentStats.DOWNLOAD, 1);
