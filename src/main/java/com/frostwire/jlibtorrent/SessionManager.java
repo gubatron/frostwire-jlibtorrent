@@ -1038,9 +1038,6 @@ public class SessionManager {
         sb.append("&x.pe=" + hostAddress + ":" + port);
     }
 
-
-
-
     private void alertsLoop() {
         Runnable r = new Runnable() {
             @Override
