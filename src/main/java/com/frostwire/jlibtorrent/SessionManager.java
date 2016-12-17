@@ -1117,7 +1117,6 @@ public class SessionManager {
         Thread t = new Thread(r, "SessionManager-alertsLoop");
         t.setDaemon(true);
         t.start();
-
     }
 
     public TorrentStats trackStats(TorrentHandle torrentHandle, long samplingIntervalInMs, long maxHistoryInMs) {
@@ -1136,5 +1135,4 @@ public class SessionManager {
         public final byte[] signature;
         public final long seq;
     }
-
 }
