@@ -1,6 +1,7 @@
 package com.frostwire.jlibtorrent;
 
 import com.frostwire.jlibtorrent.alerts.Alert;
+import com.frostwire.jlibtorrent.alerts.AlertType;
 import com.frostwire.jlibtorrent.alerts.TorrentAlert;
 
 import java.util.Arrays;
@@ -21,7 +22,7 @@ public final class TorrentStats {
     private final SessionManager sessionManager;
     private final TorrentHandle torrentHandle;
     private final long samplingIntervalInMs;
-    private final long maxHistoryInMs;
+    private static final int[] STATS = {AlertType.STATS.swig()};
     private Queue<Integer> downloadRate = new LinkedList<>();
     private Queue<Integer> uploadRate = new LinkedList<>();
     private long tStart; //for collecting sampling interval time
@@ -36,7 +37,6 @@ public final class TorrentStats {
         this.sessionManager = sessionManager;
         this.torrentHandle = torrentHandle;
         this.samplingIntervalInMs = samplingIntervalInMs;
-        this.maxHistoryInMs = maxHistoryInMs;
         this.tStart = System.currentTimeMillis();
         this.MAX_SAMPLES = maxHistoryInMs / samplingIntervalInMs;
         startAlertListener();
@@ -52,7 +52,7 @@ public final class TorrentStats {
         sessionManager.addListener(new AlertListener() {
             @Override
             public int[] types() {
-                return null;
+                return STATS;
             }
 
             @Override
