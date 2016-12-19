@@ -1,5 +1,9 @@
 package com.frostwire.jlibtorrent;
+
 import com.frostwire.jlibtorrent.alerts.Alert;
+import com.frostwire.jlibtorrent.alerts.TorrentAlert;
+
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -8,20 +12,25 @@ import java.util.Queue;
  * and upload Speed (bytes/sec). The granularity selected will depend
  * on the speed in which the results of the speed of the Alert event
  * listener is retrieved, which can have a delay in milliseconds.
+ *
  * @author haperlot
  */
 
 public final class TorrentStats {
 
-    private SessionManager sessionManager;
-    private TorrentHandle torrentHandle;
-    private long samplingIntervalInMs;
-    private long maxHistoryInMs;
-    public static final String UPLOAD = "UPLOAD";
-    public static final String DOWNLOAD = "DOWNLOAD";
+    private final SessionManager sessionManager;
+    private final TorrentHandle torrentHandle;
+    private final long samplingIntervalInMs;
+    private final long maxHistoryInMs;
     private Queue<Integer> downloadRate = new LinkedList<>();
     private Queue<Integer> uploadRate = new LinkedList<>();
     private long tStart; //for collecting sampling interval time
+    private long MAX_SAMPLES;
+
+    public enum Metric {
+        UploadRate,
+        DownloadRate
+    }
 
     public TorrentStats(final SessionManager sessionManager, TorrentHandle torrentHandle, long samplingIntervalInMs, long maxHistoryInMs) {
         this.sessionManager = sessionManager;
@@ -29,6 +38,7 @@ public final class TorrentStats {
         this.samplingIntervalInMs = samplingIntervalInMs;
         this.maxHistoryInMs = maxHistoryInMs;
         this.tStart = System.currentTimeMillis();
+        this.MAX_SAMPLES = maxHistoryInMs / samplingIntervalInMs;
         startAlertListener();
     }
 
@@ -38,34 +48,42 @@ public final class TorrentStats {
      * reach max size denoted by the maxHistory time, they will poll() the head
      * element, in our case the oldest inserted.
      */
-    private void startAlertListener() {
-
+    public void startAlertListener() {
         sessionManager.addListener(new AlertListener() {
             @Override
             public int[] types() {
-                int[] a = new int[1];
-                a[0] = 30; //getting BLOCK_FINISHED
-                return a;
+                return null;
             }
 
             @Override
             public void alert(Alert<?> alert) {
-                //only true if samplingIntervalInMs,as soon as I get it from the alert margin of error 5-90 ms.
-                if ((System.currentTimeMillis() - tStart) >= samplingIntervalInMs) {
-                    tStart = System.currentTimeMillis();
 
-                    //if !paused && !finished, it could be paused during the download
-                    if (!torrentHandle.status().isFinished() && !torrentHandle.status().isPaused()) {
+                if (!(alert instanceof TorrentAlert<?>)) {
+                    return;
+                }
+                //if not eq to the torrentHandle return.
+                if (!((TorrentAlert<?>) alert).handle().swig().op_eq(torrentHandle.swig())) {
+                    return;
+                }
 
+                //if !paused && !finished, it could be paused during the download
+                if (!torrentHandle.status().isFinished() && !torrentHandle.status().isPaused()) {
+
+                    //only true if samplingIntervalInMs
+                    if ((System.currentTimeMillis() - tStart) >= samplingIntervalInMs) {
+                        tStart = System.currentTimeMillis();
+
+                        //add stats
                         downloadRate.add(torrentHandle.status().downloadRate());
                         uploadRate.add(torrentHandle.status().uploadRate());
 
-                        //if the sampling # exceeded the limit, remove head
-                        if (downloadRate.size() * samplingIntervalInMs > maxHistoryInMs) {
+                        //if the sampling # exceeded the limit, remove. It keeps max size.
+                        while (MAX_SAMPLES < downloadRate.size()) {
                             downloadRate.poll();
                             uploadRate.poll();
                         }
                     }
+
                 }
             }
         });
@@ -73,72 +91,60 @@ public final class TorrentStats {
 
     /**
      * Will return all available items on the queue, depending on the type selected
-     * @param type type of speed (bytes/sec) data to retrieved
+     *
+     * @param type  type of speed (bytes/sec) data to retrieved
+     * @param limit optional, to limit the result set
      * @return all the elements tracked by the event listener limited by the maxHistory
      */
 
-    public int[] get(String type) {
-        Queue<Integer> resultQueue = null;
-        int i;
+    public int[] get(Metric type, Integer... limit) {
 
-        if (type.compareToIgnoreCase(this.UPLOAD) == 0)
-            resultQueue = uploadRate;
-        else if (type.compareToIgnoreCase(this.DOWNLOAD) == 0)
-            resultQueue = uploadRate;
+        Queue<Integer> resultQueue = null;
+        int numberElements = 0;
+
+        if (limit.length >= 1) {
+            numberElements = limit[0];
+        }
+
+        switch (type) {
+            case UploadRate:
+                resultQueue = uploadRate;
+                break;
+
+            case DownloadRate:
+                resultQueue = downloadRate;
+                break;
+        }
 
         if (!resultQueue.isEmpty()) {
-            int[] rateHistory = new int[resultQueue.size()];
-            //returning available items
-            i = 0;
-            for (Integer element : resultQueue) {
-                rateHistory[i] = element.intValue();
-                i++;
+            if (numberElements == 0) {
+                return toIntArray(resultQueue);
+            } else {
+                if (numberElements >= MAX_SAMPLES || numberElements >= resultQueue.size()) {
+                    return toIntArray(resultQueue);
+                } else {
+                    int[] i = toIntArray(resultQueue);
+                    return Arrays.copyOfRange(i, i.length - numberElements, i.length);
+                }
             }
-            return rateHistory;
+
         }
-        //return empty queue is empty
-        return new int[10];
+        return new int[0];
     }
 
     /**
-     * Will return all available items on the queue, depending on the type selected.
-     * It will also limit the result returned.
-     * @param type  type of speed (bytes/sec) data to retrieve
-     * @param limit number of results to retrieve
-     * @return all the elements tracked by the event listener limited by the maxHistory
+     * Helper function that converts Integer[] to int[]
+     *
+     * @param queue<Integer>
+     * @return array of int[]
      */
 
-    public int[] get(String type, int limit) {
-        Queue<Integer> resultQueue = null;
-        int[] rateHistory = null;
-        int i, j;
-
-        if (type.compareToIgnoreCase(this.UPLOAD) == 0)
-            resultQueue = uploadRate;
-        else if (type.compareToIgnoreCase(this.DOWNLOAD) == 0)
-            resultQueue = uploadRate;
-
-        if (!resultQueue.isEmpty()) {
-
-            //returning available items if limit > itemList
-            if (limit >= resultQueue.size()) {
-                rateHistory = this.get(type);
-
-            } else if (limit < resultQueue.size()) {
-                rateHistory = new int[limit];
-                i = j = 0;
-
-                for (Integer element : resultQueue) {
-                    if (j >= resultQueue.size() - limit) {
-                        rateHistory[i] = element.intValue();
-                        i++;
-                    }
-                    j++;
-                }
-            }
-            return rateHistory;
+    int[] toIntArray(Queue<Integer> queue) {
+        int[] con = new int[queue.size()];
+        int i = 0;
+        for (Integer e : queue) {
+            con[i++] = e.intValue();
         }
-        //return empty queue is empty
-        return new int[limit];
+        return con;
     }
 }
