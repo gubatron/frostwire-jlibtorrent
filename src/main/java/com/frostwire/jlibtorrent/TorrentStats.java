@@ -22,11 +22,11 @@ public final class TorrentStats {
     private final SessionManager sessionManager;
     private final TorrentHandle torrentHandle;
     private final long samplingIntervalInMs;
-    private static final int[] STATS = {AlertType.STATS.swig()};
-    private Queue<Integer> downloadRate = new LinkedList<>();
-    private Queue<Integer> uploadRate = new LinkedList<>();
+    private final int[] STATS = {AlertType.STATS.swig()};
+    private final long MAX_SAMPLES;
+    private final Queue<Integer> downloadRate = new LinkedList<>();
+    private final Queue<Integer> uploadRate = new LinkedList<>();
     private long tStart; //for collecting sampling interval time
-    private long MAX_SAMPLES;
 
     public enum Metric {
         UploadRate,
