@@ -98,10 +98,6 @@ public final class TorrentStats {
 
         Queue<Integer> resultQueue = null;
 
-        if (numberElements < 0) {
-            numberElements = 0;
-        }
-
         switch (type) {
             case UploadRate:
                 resultQueue = uploadRate;
@@ -113,7 +109,7 @@ public final class TorrentStats {
         }
 
         if (!resultQueue.isEmpty()) {
-            if (numberElements == 0) {
+            if (numberElements <= 0) {
                 return toIntArray(resultQueue);
             } else {
                 if (numberElements >= MAX_SAMPLES || numberElements >= resultQueue.size()) {
