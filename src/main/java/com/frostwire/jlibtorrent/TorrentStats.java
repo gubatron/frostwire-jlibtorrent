@@ -94,13 +94,12 @@ public final class TorrentStats {
      * @return all the elements tracked by the event listener limited by the maxHistory
      */
 
-    public int[] get(Metric type, Integer... limit) {
+    public int[] get(Metric type, Integer numberElements) {
 
         Queue<Integer> resultQueue = null;
-        int numberElements = 0;
 
-        if (limit.length >= 1) {
-            numberElements = limit[0];
+        if (numberElements < 0) {
+            numberElements = 0;
         }
 
         switch (type) {
