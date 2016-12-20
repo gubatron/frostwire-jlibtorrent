@@ -58,16 +58,13 @@ public final class TorrentStats {
             @Override
             public void alert(Alert<?> alert) {
 
-                if (!(alert instanceof TorrentAlert<?>)) {
-                    return;
-                }
                 //if not eq to the torrentHandle return.
                 if (!((TorrentAlert<?>) alert).handle().swig().op_eq(torrentHandle.swig())) {
                     return;
                 }
 
-                //if !paused && !finished, it could be paused during the download
-                if (!torrentHandle.status().isFinished() && !torrentHandle.status().isPaused()) {
+                //if !paused, it will take both stats when uploading / downloading
+                if (!torrentHandle.status().isPaused()) {
 
                     //only true if samplingIntervalInMs
                     if ((System.currentTimeMillis() - tStart) >= samplingIntervalInMs) {
@@ -140,6 +137,7 @@ public final class TorrentStats {
      */
 
     int[] toIntArray(Queue<Integer> queue) {
+
         int[] con = new int[queue.size()];
         int i = 0;
         for (Integer e : queue) {
