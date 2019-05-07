@@ -13,7 +13,7 @@ public class libtorrent_jni {
 
     public static String jlibtorrentVersion() {
         // extracted from the gradle with the run-swig step
-        return "1.2.1.0";
+        return "$JLIBTORRENT_VERSION$";
     }
 
     static {
@@ -1469,7 +1469,8 @@ public class libtorrent_jni {
   public final static native long torrent_handle_query_save_path_get();
   public final static native long torrent_handle_status__SWIG_0(long jarg1, torrent_handle jarg1_, long jarg2, status_flags_t jarg2_);
   public final static native long torrent_handle_status__SWIG_1(long jarg1, torrent_handle jarg1_);
-  public final static native void torrent_handle_get_download_queue(long jarg1, torrent_handle jarg1_, long jarg2, partial_piece_info_vector jarg2_);
+  public final static native long torrent_handle_get_download_queue__SWIG_0(long jarg1, torrent_handle jarg1_);
+  public final static native void torrent_handle_get_download_queue__SWIG_1(long jarg1, torrent_handle jarg1_, long jarg2, partial_piece_info_vector jarg2_);
   public final static native long torrent_handle_alert_when_available_get();
   public final static native void torrent_handle_set_piece_deadline__SWIG_0(long jarg1, torrent_handle jarg1_, int jarg2, int jarg3, long jarg4, deadline_flags_t jarg4_);
   public final static native void torrent_handle_set_piece_deadline__SWIG_1(long jarg1, torrent_handle jarg1_, int jarg2, int jarg3);
@@ -2746,7 +2747,7 @@ public class libtorrent_jni {
   public final static native int settings_pack_allow_multiple_connections_per_ip_get();
   public final static native int settings_pack_send_redundant_have_get();
   public final static native int settings_pack_use_dht_as_fallback_get();
-  public final static native int settings_pack_coalesce_reads_get();
+  public final static native int settings_pack_deprecated_flush_write_cache_get();
   public final static native int settings_pack_disable_hash_checks_get();
   public final static native int settings_pack_volatile_read_cache_get();
   public final static native int settings_pack_no_atime_storage_get();
@@ -2756,7 +2757,7 @@ public class libtorrent_jni {
   public final static native int settings_pack_support_share_mode_get();
   public final static native int settings_pack_announce_crypto_support_get();
   public final static native int settings_pack_tracker_completion_timeout_get();
-  public final static native int settings_pack_cache_expiry_get();
+  public final static native int settings_pack_deprecated_cache_expiry_get();
   public final static native int settings_pack_auto_manage_interval_get();
   public final static native int settings_pack_read_cache_line_size_get();
   public final static native int settings_pack_num_optimistic_unchoke_slots_get();
@@ -2818,6 +2819,7 @@ public class libtorrent_jni {
   public final static native void session_handle_post_torrent_updates__SWIG_1(long jarg1, session_handle jarg1_);
   public final static native void session_handle_post_session_stats(long jarg1, session_handle jarg1_);
   public final static native void session_handle_post_dht_stats(long jarg1, session_handle jarg1_);
+  public final static native long session_handle_get_context(long jarg1, session_handle jarg1_);
   public final static native long session_handle_find_torrent(long jarg1, session_handle jarg1_, long jarg2, sha1_hash jarg2_);
   public final static native long session_handle_get_torrents(long jarg1, session_handle jarg1_);
   public final static native long session_handle_add_torrent(long jarg1, session_handle jarg1_, long jarg2, add_torrent_params jarg2_, long jarg3, error_code jarg3_);
@@ -2825,7 +2827,6 @@ public class libtorrent_jni {
   public final static native void session_handle_pause(long jarg1, session_handle jarg1_);
   public final static native void session_handle_resume(long jarg1, session_handle jarg1_);
   public final static native boolean session_handle_is_paused(long jarg1, session_handle jarg1_);
-  public final static native int session_handle_disk_cache_no_pieces_get();
   public final static native void session_handle_set_dht_settings(long jarg1, session_handle jarg1_, long jarg2, dht_settings jarg2_);
   public final static native boolean session_handle_is_dht_running(long jarg1, session_handle jarg1_);
   public final static native long session_handle_get_dht_settings(long jarg1, session_handle jarg1_);
@@ -2933,6 +2934,7 @@ public class libtorrent_jni {
   public final static native void delete_dht_settings(long jarg1);
   public final static native long min_memory_usage();
   public final static native long high_performance_seed();
+  public final static native long default_disk_io_constructor(long jarg1, long jarg2);
   public final static native long new_session_proxy__SWIG_0();
   public final static native void delete_session_proxy(long jarg1);
   public final static native long new_session_proxy__SWIG_1(long jarg1, session_proxy jarg1_);
@@ -2945,14 +2947,19 @@ public class libtorrent_jni {
   public final static native long session_params_dht_settings_get(long jarg1, session_params jarg1_);
   public final static native void session_params_dht_state_set(long jarg1, session_params jarg1_, long jarg2, dht_state jarg2_);
   public final static native long session_params_dht_state_get(long jarg1, session_params jarg1_);
+  public final static native void session_params_disk_io_constructor_set(long jarg1, session_params jarg1_, long jarg2);
+  public final static native long session_params_disk_io_constructor_get(long jarg1, session_params jarg1_);
   public final static native void delete_session_params(long jarg1);
   public final static native long read_session_params__SWIG_0(long jarg1, bdecode_node jarg1_, long jarg2, save_state_flags_t jarg2_);
   public final static native long read_session_params__SWIG_1(long jarg1, bdecode_node jarg1_);
   public final static native long new_session__SWIG_0(long jarg1, session_params jarg1_);
   public final static native long new_session__SWIG_1();
-  public final static native long new_session__SWIG_2(long jarg1, settings_pack jarg1_, long jarg2, session_flags_t jarg2_);
-  public final static native long new_session__SWIG_3(long jarg1, settings_pack jarg1_);
-  public final static native long new_session__SWIG_4(long jarg1, session jarg1_);
+  public final static native long new_session__SWIG_2(long jarg1, session_params jarg1_, long jarg2);
+  public final static native long new_session__SWIG_4(long jarg1, settings_pack jarg1_, long jarg2, session_flags_t jarg2_);
+  public final static native long new_session__SWIG_5(long jarg1, settings_pack jarg1_);
+  public final static native long new_session__SWIG_6(long jarg1, session jarg1_);
+  public final static native long new_session__SWIG_7(long jarg1, settings_pack jarg1_, long jarg2, long jarg3, session_flags_t jarg3_);
+  public final static native long new_session__SWIG_8(long jarg1, settings_pack jarg1_, long jarg2);
   public final static native void delete_session(long jarg1);
   public final static native long session_abort(long jarg1, session jarg1_);
   public final static native int peer_connection_handle_type(long jarg1, peer_connection_handle jarg1_);
@@ -2981,8 +2988,7 @@ public class libtorrent_jni {
   public final static native boolean peer_connection_handle_can_disconnect(long jarg1, peer_connection_handle jarg1_, long jarg2, error_code jarg2_);
   public final static native boolean peer_connection_handle_has_metadata(long jarg1, peer_connection_handle jarg1_);
   public final static native boolean peer_connection_handle_in_handshake(long jarg1, peer_connection_handle jarg1_);
-  public final static native void peer_connection_handle_send_buffer__SWIG_0(long jarg1, peer_connection_handle jarg1_, String jarg2, int jarg3, long jarg4);
-  public final static native void peer_connection_handle_send_buffer__SWIG_1(long jarg1, peer_connection_handle jarg1_, String jarg2, int jarg3);
+  public final static native void peer_connection_handle_send_buffer(long jarg1, peer_connection_handle jarg1_, String jarg2, int jarg3);
   public final static native long peer_connection_handle_last_seen_complete(long jarg1, peer_connection_handle jarg1_);
   public final static native boolean peer_connection_handle_op_eq(long jarg1, peer_connection_handle jarg1_, long jarg2, peer_connection_handle jarg2_);
   public final static native boolean peer_connection_handle_op_ne(long jarg1, peer_connection_handle jarg1_, long jarg2, peer_connection_handle jarg2_);

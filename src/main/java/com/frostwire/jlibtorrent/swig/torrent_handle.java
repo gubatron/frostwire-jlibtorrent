@@ -55,8 +55,12 @@ public class torrent_handle {
     return new torrent_status(libtorrent_jni.torrent_handle_status__SWIG_1(swigCPtr, this), true);
   }
 
+  public partial_piece_info_vector get_download_queue() {
+    return new partial_piece_info_vector(libtorrent_jni.torrent_handle_get_download_queue__SWIG_0(swigCPtr, this), true);
+  }
+
   public void get_download_queue(partial_piece_info_vector queue) {
-    libtorrent_jni.torrent_handle_get_download_queue(swigCPtr, this, partial_piece_info_vector.getCPtr(queue), queue);
+    libtorrent_jni.torrent_handle_get_download_queue__SWIG_1(swigCPtr, this, partial_piece_info_vector.getCPtr(queue), queue);
   }
 
   public void set_piece_deadline(int index, int deadline, deadline_flags_t flags) {

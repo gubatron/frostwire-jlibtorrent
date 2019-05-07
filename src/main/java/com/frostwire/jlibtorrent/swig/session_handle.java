@@ -87,6 +87,10 @@ public class session_handle {
     libtorrent_jni.session_handle_post_dht_stats(swigCPtr, this);
   }
 
+  public SWIGTYPE_p_io_context get_context() {
+    return new SWIGTYPE_p_io_context(libtorrent_jni.session_handle_get_context(swigCPtr, this), false);
+  }
+
   public torrent_handle find_torrent(sha1_hash info_hash) {
     return new torrent_handle(libtorrent_jni.session_handle_find_torrent(swigCPtr, this, sha1_hash.getCPtr(info_hash), info_hash), true);
   }
@@ -299,8 +303,6 @@ public class session_handle {
   public final static save_state_flags_t save_settings = new save_state_flags_t(libtorrent_jni.session_handle_save_settings_get(), false);
   public final static save_state_flags_t save_dht_settings = new save_state_flags_t(libtorrent_jni.session_handle_save_dht_settings_get(), false);
   public final static save_state_flags_t save_dht_state = new save_state_flags_t(libtorrent_jni.session_handle_save_dht_state_get(), false);
-  public final static int disk_cache_no_pieces = libtorrent_jni.session_handle_disk_cache_no_pieces_get();
-
   public final static remove_flags_t delete_files = new remove_flags_t(libtorrent_jni.session_handle_delete_files_get(), false);
   public final static remove_flags_t delete_partfile = new remove_flags_t(libtorrent_jni.session_handle_delete_partfile_get(), false);
   public final static session_flags_t add_default_plugins = new session_flags_t(libtorrent_jni.session_handle_add_default_plugins_get(), false);

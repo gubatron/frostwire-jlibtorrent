@@ -74,4 +74,13 @@ public class session_params {
     return (cPtr == 0) ? null : new dht_state(cPtr, false);
   }
 
+  public void setDisk_io_constructor(SWIGTYPE_p_std__functionT_std__unique_ptrT_libtorrent__disk_interface_t_fio_context_R_libtorrent__counters_RF_t value) {
+    libtorrent_jni.session_params_disk_io_constructor_set(swigCPtr, this, SWIGTYPE_p_std__functionT_std__unique_ptrT_libtorrent__disk_interface_t_fio_context_R_libtorrent__counters_RF_t.getCPtr(value));
+  }
+
+  public SWIGTYPE_p_std__functionT_std__unique_ptrT_libtorrent__disk_interface_t_fio_context_R_libtorrent__counters_RF_t getDisk_io_constructor() {
+    long cPtr = libtorrent_jni.session_params_disk_io_constructor_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__functionT_std__unique_ptrT_libtorrent__disk_interface_t_fio_context_R_libtorrent__counters_RF_t(cPtr, false);
+  }
+
 }

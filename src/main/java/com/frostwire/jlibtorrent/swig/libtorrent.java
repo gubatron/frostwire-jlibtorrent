@@ -181,6 +181,10 @@ public class libtorrent implements libtorrentConstants {
     return new settings_pack(libtorrent_jni.high_performance_seed(), true);
   }
 
+  public static SWIGTYPE_p_std__unique_ptrT_libtorrent__disk_interface_t default_disk_io_constructor(SWIGTYPE_p_io_context ios, SWIGTYPE_p_libtorrent__counters cnt) {
+    return new SWIGTYPE_p_std__unique_ptrT_libtorrent__disk_interface_t(libtorrent_jni.default_disk_io_constructor(SWIGTYPE_p_io_context.getCPtr(ios), SWIGTYPE_p_libtorrent__counters.getCPtr(cnt)), true);
+  }
+
   public static session_params read_session_params(bdecode_node e, save_state_flags_t flags) {
     return new session_params(libtorrent_jni.read_session_params__SWIG_0(bdecode_node.getCPtr(e), e, save_state_flags_t.getCPtr(flags), flags), true);
   }
